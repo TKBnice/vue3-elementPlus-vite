@@ -62,22 +62,31 @@
     getCurrentInstance,
     watch
   } from 'vue'
-  import { useRoute, useRouter, onBeforeRouteUpdate } from 'vue-router'
+  import { useRoute, useRouter, onBeforeRouteUpdate,RouteLocationNormalized } from 'vue-router'
+  import type { Menu } from 'store/interface/index';
   import { useStore } from 'store/index'
   import { setSession, removeSession } from '@/utils/storage'
-
+  
+  interface State {
+    routePath: string
+    tagsRefsIndex: number
+    tagsViewList: Array<Menu>
+    sortable: string
+    tagsViewRoutesList: Menu[]
+  }
   export default {
     name: 'layoutTagsView',
     components: {},
     setup() {
       const { proxy } = getCurrentInstance() as any
-      const tagsRefs = ref([])
-      const scrollbarRef = ref()
-      const tagsUlRef = ref()
+      const tagsRefs = ref<ElRef[]>([])
+      const scrollbarRef = ref<ElRef>(null)
+      const tagsUlRef = ref<ElRef>(null);
       const store = useStore()
       const route = useRoute()
       const router = useRouter()
-      const state: any = reactive({
+
+      const state = reactive<State>({
         routePath: route.path,
         tagsRefsIndex: 0,
         tagsViewList: [],
@@ -89,33 +98,41 @@
       const getThemeConfig = computed(() => {
         return store.state.themeConfig
       })
+
       // 存储 tagsViewList 到浏览器临时缓存中，页面刷新时，保留记录
-      const addBrowserSetSession = (tagsViewList: Array<object>) => {
+      const addBrowserSetSession = (tagsViewList: Array<Menu>) => {
         setSession('tagsViewList', tagsViewList)
       }
+
       // 获取 vuex 中的 tagsViewRoutes 列表
       const getTagsViewRoutes = () => {
         state.routePath = route.path
-        state.tagsViewList = []
+        state.tagsViewList = [] 
         if (!store.state.themeConfig.isCacheTagsView)
           removeSession('tagsViewList')
         state.tagsViewRoutesList = store.state.tagsViewRoutes.tagsViewRoutes
         addTagsView(route.path)
       }
 
-      // 添加 tagsView：未设置隐藏（isHide）也添加到在 tagsView 中
-      const addTagsView = (path: string, to?: any) => {
-        if (state.tagsViewList.some((v: any) => v.path === path)) return false
-        const item = state.tagsViewRoutesList.find((v: any) => v.path === path)
-        if (item.meta.isLink && !item.meta.isIframe) return false
-        item.query = to?.query ? to?.query : route.query
-        state.tagsViewList.push({ ...item })
-        addBrowserSetSession(state.tagsViewList)
+      // 1、添加 tagsView：未设置隐藏（isHide）也添加到在 tagsView 中
+      const addTagsView = (path: string, to?: RouteLocationNormalized ) => {
+        if (state.tagsViewList.some((v) => v.path === path))
+          return false
+        const item:Menu | undefined = state.tagsViewRoutesList.find(
+          (v:Menu) => v.path === path
+        )
+        
+        if (item) {
+          if ( item.meta.isLink ) return false
+          item.query = to?.query ? to?.query : route.query
+          state.tagsViewList.push({ ...item })
+          addBrowserSetSession(state.tagsViewList)
+        }
       }
 
-      // 关闭当前 tagsView：如果是设置了固定的（isAffix），不可以关闭
+      // 3、关闭当前 tagsView：如果是设置了固定的（isAffix），不可以关闭
       const closeCurrentTagsView = (path: string) => {
-        state.tagsViewList.map((v: any, k: number, arr: any) => {
+        state.tagsViewList.map((v: Menu, k: number, arr: Menu[]) => {
           if (!v.meta.isAffix) {
             if (v.path === path) {
               state.tagsViewList.splice(k, 1)
@@ -124,7 +141,7 @@
                 if (state.tagsViewList.length === k)
                   router.push({
                     path: arr[arr.length - 1].path,
-                    query: arr[arr.length - 1].query
+                    query: arr[arr.length - 1].query || undefined
                   })
                 // 否则，跳转到下一个
                 else router.push({ path: arr[k].path, query: arr[k].query })

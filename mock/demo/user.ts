@@ -63,7 +63,7 @@ export default [
     url: '/mock-api/login',
     timeout: 200,
     method: 'post',
-    response: ({ body }) => {
+    response: ({ body }: any) => {
       const { username, password } = body
       const checkUser = createFakeUserList().find(
         (item) => item.username === username && password === item.password

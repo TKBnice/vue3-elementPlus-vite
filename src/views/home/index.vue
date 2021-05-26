@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HelloWorld></HelloWorld>
+    <HelloWorld msg="build 时候，组件必传参数" />
       <el-button @click="addCount">count is: {{ count }}</el-button>
   </div>
 </template>

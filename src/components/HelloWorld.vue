@@ -38,6 +38,7 @@
     <code>components/HelloWorld.vue</code>
     to test hot module replacement.
   </p>
+  <SvgIcon iconClass="bug"></SvgIcon>
 </template>
 
 <script lang="ts">
@@ -47,7 +48,8 @@
     props: {
       msg: {
         type: String,
-        required: true
+        default:'默认msgs',
+        require:true
       }
     },
     setup: () => {

@@ -13,7 +13,7 @@
     </el-submenu>
     <el-menu-item :index="val.path" :key="val.path" v-else>
       <template
-        v-if="!val.meta.isLink || (val.meta.isLink && val.meta.isIframe)"
+        v-if="!val.meta.isLink"
       >
         <i :class="val.meta.icon ? val.meta.icon : ''"></i>
         <span>{{ val.meta.title }}</span>
@@ -29,12 +29,14 @@
 </template>
 
 <script lang="ts">
+  import type { PropType } from 'vue';
+  import type { Menu } from 'store/interface/index';
   import { computed, defineComponent } from 'vue'
   export default defineComponent({
     name: 'navMenuSubItem',
     props: {
       chil: {
-        type: Array,
+        type: Array as PropType<Menu[]>,
         default: () => []
       }
     },

@@ -13,7 +13,15 @@ export default {
 	components: { NavBarsIndex },
 	setup() {
 		const store = useStore();
-		return {};
+		// 设置 header 的高度
+		// const setHeaderHeight = computed(() => {
+		// 	let { isTagsview, layout } = store.state.themeConfig;
+		// 	if (isTagsview && layout !== 'classic') return '84px';
+		// 	else return '50px';
+		// });
+		return {
+			// setHeaderHeight,
+		};
 	},
 };
 </script>

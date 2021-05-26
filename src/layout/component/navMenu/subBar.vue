@@ -4,9 +4,9 @@
     background-color="transparent"
     :collapse="setIsCollapse"
     :default-active="defaultActive"
-    :unique-opened="false"
+    :unique-opened="getThemeConfig.isUniqueOpened"
     :collapse-transition="false"
-  >
+  >	
     <template v-for="val in menuLists">
       <el-submenu
         :index="val.path"
@@ -24,7 +24,7 @@
         <i :class="val.meta.icon ? val.meta.icon : ''"></i>
         <template
           #title
-          v-if="!val.meta.isLink || (val.meta.isLink && val.meta.isIframe)"
+          v-if="!val.meta.isLink"
         >
           <span>{{ val.meta.title }}</span>
         </template>
@@ -39,14 +39,15 @@
 </template>
 
 <script lang="ts">
+import type { PropType } from 'vue';
+  import type { Menu } from 'store/interface/index';
   import {
     ref,
-    watch,
     toRefs,
     reactive,
     computed,
     defineComponent,
-    getCurrentInstance
+    watch
   } from 'vue'
   import { useRoute, onBeforeRouteUpdate } from 'vue-router'
   import { useStore } from 'store/index'
@@ -56,8 +57,8 @@
     components: { SubItem },
     props: {
       menuList: {
-        type: Array,
-        default: () => []
+        type: Array as PropType<Menu[]>,
+        require:true
       }
     },
     setup(props) {
@@ -66,6 +67,7 @@
       const state = reactive({
         defaultActive: route.path
       })
+      
       // 获取父级菜单数据
       const menuLists = computed(() => props.menuList)
 
@@ -76,7 +78,7 @@
       const setIsCollapse = computed(() =>
         document.body.clientWidth < 1000
           ? false
-          : getThemeConfig.value.isCollapse
+          : store.state.themeConfig.isCollapse
       )
 
       // 路由更新时

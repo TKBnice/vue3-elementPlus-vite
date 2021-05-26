@@ -182,15 +182,19 @@ const plugins = [
   ElNotification
 ]
 
-export function setupElement(app: App<Element>): void {
-  components.forEach((component: any) => {
-    app.component(component.name, component)
-  })
+ import ElementPlus from'element-plus'
 
-  plugins.forEach((plugin: any) => {
-    app.use(plugin)
-  })
+export function setupElementPlus(app: App<Element>): void {
 
+  // components.forEach((component: any) => {
+  //   app.component(component.name, component)
+  // })
+
+  // plugins.forEach((plugin: any) => {
+  //   app.use(plugin)
+  // })
+  console.log('elementPlus---',ElementPlus);
+  app.use(ElementPlus);
   // 全局配置
   app.config.globalProperties.$ELEMENT = { size: 'small', zIndex: 3000 }
 }

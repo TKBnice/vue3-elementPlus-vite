@@ -13,7 +13,7 @@ const app: Module<App, RootStateTypes> = {
     }
   },
   mutations: {
-    increment(state: State) {
+    increment(state: App) {
       state.count++
     }
   }

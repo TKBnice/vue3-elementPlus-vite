@@ -10,7 +10,7 @@
    compress: 'gzip' | 'brotli' | 'none',
    deleteOriginFile: boolean = false
  ): Plugin | Plugin[] {
-   const compressList = compress.split(0);
+   const compressList = compress.split(',');
  
    const plugins: Plugin[] = [];
  

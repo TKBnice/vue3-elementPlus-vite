@@ -9,6 +9,7 @@ export function getLocal(key: string) {
   return JSON.parse(json)
 }
 
+// 2. sessionStorage
 // 设置临时缓存
 export function setSession(key: string, val: any) {
 	window.sessionStorage.setItem(key, JSON.stringify(val));

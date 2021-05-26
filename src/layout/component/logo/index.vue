@@ -9,28 +9,31 @@
 </template>
 
 <script lang="ts">
-  import { computed } from 'vue'
+  import { computed, getCurrentInstance } from 'vue'
   import { useStore } from 'store/index'
   export default {
     name: 'layoutLogo',
     setup() {
-
+      const { proxy } = getCurrentInstance() as any
       const store = useStore()
       // 获取布局配置信息
       const getThemeConfig = computed(() => {
         return store.state.themeConfig
       })
-
       // 设置显示/隐藏 logo
       const setShowLogo = computed(() => {
-        let {  isShowLogo } = store.state.themeConfig
-        return isShowLogo  
+        let { layout, isShowLogo } = store.state.themeConfig
+        return (
+          (isShowLogo && layout === 'defaults') ||
+          (isShowLogo && layout === 'columns')
+        )
       })
-
+      // logo 点击实现菜单展开/收起
       const onThemeConfigChange = () => {
+        if (store.state.themeConfig.layout === 'transverse') return false
+        // proxy.mittBus.emit('onMenuClick');
         store.state.themeConfig.isCollapse = !store.state.themeConfig.isCollapse
       }
-
       return {
         getThemeConfig,
         setShowLogo,

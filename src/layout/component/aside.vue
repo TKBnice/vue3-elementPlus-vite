@@ -2,7 +2,7 @@
   <el-aside
     class="layout-aside"
     :class="setCollapseWidth"
-    v-if="clientWidth > 900"
+    v-if="clientWidth > 1000"
   >
     <Logo v-if="setShowLogo" />
     <el-scrollbar class="flex-auto" ref="layoutAsideScrollbarRef">
@@ -18,6 +18,7 @@
   >
     <el-aside class="layout-aside w100 h100">
       <Logo v-if="setShowLogo" />
+
       <el-scrollbar class="flex-auto" ref="layoutAsideScrollbarRef">
         <SubBar :menuList="menuList" />
       </el-scrollbar>
@@ -36,46 +37,23 @@
     onBeforeMount,
     onUnmounted
   } from 'vue'
+  import type { Menu } from 'store/interface/index'
   import { useStore } from 'store/index'
   import Logo from './logo/index.vue'
   import SubBar from './navMenu/subBar.vue'
+
 
   export default {
     name: 'layoutAside',
     components: { Logo, SubBar },
     setup() {
+      const { proxy } = getCurrentInstance() as any
       const store = useStore()
-      const state: any = reactive({
-        menuList: [
-          {
-            meta: {
-              auth: ['admin', 'test'],
-              icon: 'iconfont el-icon-menu',
-              isAffix: true,
-              isHide: false,
-              isIframe: false,
-              isKeepAlive: true,
-              title: '首页',
-              index: '1'
-            },
-            name: 'home',
-            path: '/home'
-          },
-          {
-            meta: {
-              auth: ['admin', 'test'],
-              icon: 'iconfont el-icon-s-grid',
-              isAffix: true,
-              isHide: false,
-              isIframe: false,
-              isKeepAlive: true,
-              title: '首页2',
-              index: '2'
-            },
-            name: 'home2',
-            path: '/home2'
-          }
-        ],
+      const state = reactive<{
+        menuList: Menu[]
+        clientWidth: number | string
+      }>({
+        menuList: [],
         clientWidth: ''
       })
 
@@ -86,9 +64,17 @@
 
       // 设置显示/隐藏 logo
       const setShowLogo = computed(() => {
-        let { isShowLogo } = store.state.themeConfig
-        return isShowLogo
+        let { layout, isShowLogo } = store.state.themeConfig
+        return (
+          (isShowLogo && layout === 'defaults') ||
+          (isShowLogo && layout === 'columns')
+        )
       })
+
+      // 设置菜单导航是否固定（移动端）
+      const initMenuFixed = (clientWidth: number) => {
+        state.clientWidth = clientWidth
+      }
 
       const setCollapseWidth = computed(() => {
         let { layout, isCollapse, menuBar } = store.state.themeConfig
@@ -116,31 +102,37 @@
         }
       })
 
-      // 设置菜单导航是否固定（移动端）
-      const initMenuFixed = (clientWidth: number) => {
-        state.clientWidth = clientWidth
-      }
-
-          // 设置/过滤路由（非静态路由/是否显示在菜单中）
+      // 设置/过滤路由（非静态路由/是否显示在菜单中）
       const setFilterRoutes = () => {
         state.menuList = filterRoutesFun(store.state.routesList.routesList)
       }
 
       // 路由过滤递归函数
-      const filterRoutesFun = (arr: Array<object>) => {
+      const filterRoutesFun = (arr: Menu[]):Menu[] => {
         return arr
-          .filter((item: any) => !item.meta.isHide)
-          .map((item: any) => {
+          .filter((item: Menu) => !item.meta.isHide)
+          .map((item: Menu) => {
             item = Object.assign({}, item)
             if (item.children) item.children = filterRoutesFun(item.children)
             return item
           })
       }
 
+      // 监听 themeConfig 配置文件的变化，更新菜单 el-scrollbar 的高度
+      watch(store.state.themeConfig, (val) => {
+        if (val.isShowLogoChange !== val.isShowLogo) {
+          if (!proxy.$refs.layoutAsideScrollbarRef) return false
+          proxy.$refs.layoutAsideScrollbarRef.update()
+        }
+      })
+
       // 页面加载前
       onBeforeMount(() => {
         initMenuFixed(document.body.clientWidth)
         setFilterRoutes()
+        proxy.mittBus.on('layoutMobileResize', (res: any) => {
+          initMenuFixed(res.clientWidth)
+        })
       })
 
       // 页面卸载时
