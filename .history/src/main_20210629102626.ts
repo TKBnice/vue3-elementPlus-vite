@@ -3,7 +3,6 @@ import { setupStore } from './store' // 状态管理
 import router, { setupRouter } from './router' // 路由
 import { setupElementPlus } from './libs/element' // element UI
 import { setupGlobalCom } from './components/index'
-import 'virtual:svg-icons-register' // Register icon sprite
 
 import './styles/index.scss'
 

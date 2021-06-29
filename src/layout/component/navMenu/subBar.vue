@@ -81,6 +81,7 @@ import type { PropType } from 'vue';
           : store.state.themeConfig.isCollapse
       )
 
+
       // 路由更新时
       onBeforeRouteUpdate((to) => {
         const clientWidth = document.body.clientWidth
@@ -92,7 +93,11 @@ import type { PropType } from 'vue';
         menuLists,
         setIsCollapse,
         ...toRefs(state)
+        
       }
     }
   })
-</script>
+
+</script> 
+
+

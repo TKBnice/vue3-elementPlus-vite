@@ -8,7 +8,7 @@ import path from 'path'
 
 export function configSvgIconsPlugin(isBuild: boolean): Plugin {
   const svgIconsPlugin: Plugin = viteSvgIcons({
-    iconDirs: [path.resolve(process.cwd(), 'src/assets/icons/svg')],
+    iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
     svgoOptions: isBuild,
     // default
     symbolId: 'icon-[dir]-[name]'

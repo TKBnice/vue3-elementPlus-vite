@@ -31,14 +31,11 @@ export default ({ command, mode }: ConfigEnv): UserConfigExport => {
     base: './',
     plugins: [
       vue(),
-      configMockPlugin(VITE_USE_MOCK, isBuild), // mock 模拟请求
+      configMockPlugin(VITE_USE_MOCK,isBuild), // mock 模拟请求
       configSvgIconsPlugin(isBuild), // svg 处理
       configStyleImportPlugin(isBuild), // element-plus 按需引入
       configHtmlPlugin(viteEnv, isBuild), // EJS 标签处理
-      configCompressPlugin(
-        VITE_BUILD_COMPRESS,
-        VITE_BUILD_COMPRESS_DELETE_ORIGIN_FILE
-      ) // gzip 或者 brotli 来压缩资源
+      configCompressPlugin( VITE_BUILD_COMPRESS, VITE_BUILD_COMPRESS_DELETE_ORIGIN_FILE)  // gzip 或者 brotli 来压缩资源
     ],
     resolve: {
       alias: {
@@ -51,7 +48,6 @@ export default ({ command, mode }: ConfigEnv): UserConfigExport => {
         styles: resolve('src/styles')
       }
     },
-
     server: {
       //服务器主机名
       host: '',
@@ -60,7 +56,7 @@ export default ({ command, mode }: ConfigEnv): UserConfigExport => {
       //设为 true 时若端口已被占用则会直接退出，而不是尝试下一个可用端口
       strictPort: false,
       //服务器启动时自动在浏览器中打开应用程序,当此值为字符串时，会被用作 URL 的路径名
-      open: false
+      open: false,
       //自定义代理规则
       // proxy: {
       //   // 选项写法

@@ -51,7 +51,6 @@ export default ({ command, mode }: ConfigEnv): UserConfigExport => {
         styles: resolve('src/styles')
       }
     },
-
     server: {
       //服务器主机名
       host: '',
